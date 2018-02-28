@@ -465,14 +465,23 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
      */
     private void processResultFromCamera(int destType, Intent intent) throws IOException {
         int rotate = 0;
+		
+		LOG.d(LOG_TAG, "Processing Camera Result...");
 
         // Create an ExifHelper to save the exif data that is lost during compression
         ExifHelper exif = new ExifHelper();
+		
+		String sourcePath = (this.allowEdit && this.croppedUri != null) ?
+			FileHelper.stripFileProtocol(this.croppedUri.toString()) :
+			(this.imageUri.getFilePath() != null ? 
+				this.imageUri.getFilePath() : 
+				null);
 
-        String sourcePath = (this.allowEdit && this.croppedUri != null) ?
-                FileHelper.stripFileProtocol(this.croppedUri.toString()) :
-                this.imageUri.getFilePath();
-
+        if (sourcePath == null) {
+			LOG.d(LOG_TAG, "Unable to get sourcePath!");
+            this.failPicture("Unable to get sourcePath!");
+            return;
+        }
 
         if (this.encodingType == JPEG) {
             try {
@@ -1325,6 +1334,9 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
      * before we get the launched Activity's result.
      */
     public Bundle onSaveInstanceState() {
+		
+		LOG.d(LOG_TAG, "Saving Instance State...");
+
         Bundle state = new Bundle();
         state.putInt("destType", this.destType);
         state.putInt("srcType", this.srcType);
@@ -1350,6 +1362,9 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
     }
 
     public void onRestoreStateForActivityResult(Bundle state, CallbackContext callbackContext) {
+		
+		LOG.d(LOG_TAG, "Restoring State...");
+		
         this.destType = state.getInt("destType");
         this.srcType = state.getInt("srcType");
         this.mQuality = state.getInt("mQuality");

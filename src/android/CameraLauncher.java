@@ -1192,6 +1192,9 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
      * @param newImage
      */
     private void cleanup(int imageType, Uri oldImage, Uri newImage, Bitmap bitmap) {
+		
+		System.out.println("Cleaning up...");
+		
         if (bitmap != null) {
             bitmap.recycle();
         }
